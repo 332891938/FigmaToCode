@@ -4,6 +4,7 @@ import { frameNodeToAlt } from "../../src/altNodes/altConversion";
 import { createFigma } from "figma-api-stub";
 import { tailwindSize } from "../../src/tailwind/builderImpl/tailwindSize";
 import { convertSingleNodeToAlt } from "../../src/altNodes/altConversion";
+import {TAILWIND_MAX_SIZE} from "../../src/common/nodeWidthHeight";
 
 describe("Tailwind Size", () => {
   const figma = createFigma({
@@ -74,7 +75,7 @@ describe("Tailwind Size", () => {
 
   it("small frame inside large frame", () => {
     const node = figma.createFrame();
-    node.resize(500, 500);
+    node.resize(TAILWIND_MAX_SIZE+100, TAILWIND_MAX_SIZE+100);
     node.layoutMode = "NONE";
     node.counterAxisSizingMode = "FIXED";
     node.x = 0;
@@ -88,7 +89,7 @@ describe("Tailwind Size", () => {
     node.appendChild(subnode);
 
     expect(tailwindMain([frameNodeToAlt(node)]))
-      .toEqual(`<div class="inline-flex items-center justify-center p-60" style="width: 500px; height: 500px;">
+      .toEqual(`<div class="inline-flex items-start justify-start pl-60 pr-96 pt-60 pb-96" style="width: ${TAILWIND_MAX_SIZE+100}px; height: ${TAILWIND_MAX_SIZE+100}px;">
     <img class="flex-1 h-full rounded-full" src="https://via.placeholder.com/8x8" />
 </div>`);
 
@@ -154,13 +155,13 @@ describe("Tailwind Size", () => {
 
     it("when parent is vertical and node is vertical, child defines the size", () => {
       const node = new AltFrameNode();
-      node.width = 500;
-      node.height = 500;
+      node.width = TAILWIND_MAX_SIZE+100;
+      node.height = TAILWIND_MAX_SIZE+100;
       node.counterAxisSizingMode = "FIXED";
       node.layoutMode = "VERTICAL";
 
       const subnode = new AltFrameNode();
-      subnode.width = 500;
+      subnode.width = TAILWIND_MAX_SIZE+100;
       subnode.height = 255;
       subnode.counterAxisSizingMode = "FIXED";
       subnode.layoutMode = "VERTICAL";

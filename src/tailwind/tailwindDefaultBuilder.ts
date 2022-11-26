@@ -28,6 +28,7 @@ import {
 import { tailwindPadding } from "./builderImpl/tailwindPadding";
 import { formatWithJSX } from "../common/parseJSX";
 import { parentCoordinates } from "../common/parentCoordinates";
+import {TAILWIND_MAX_SIZE} from "../common/nodeWidthHeight";
 
 export class TailwindDefaultBuilder {
   attributes: string = "";
@@ -135,9 +136,9 @@ export class TailwindDefaultBuilder {
     if ("isRelative" in node && node.isRelative === true) {
       this.style += htmlSizeForTailwind(node, this.isJSX);
     } else if (
-      node.parent?.isRelative === true ||
-      node.width > 384 ||
-      node.height > 384
+      node.parent?.isRelative === true 
+      || node.width > TAILWIND_MAX_SIZE 
+      || node.height > TAILWIND_MAX_SIZE
     ) {
       // to avoid mixing html and tailwind sizing too much, only use html sizing when absolutely necessary.
       // therefore, if only one attribute is larger than 256, only use the html size in there.
@@ -149,7 +150,7 @@ export class TailwindDefaultBuilder {
 
       // when textAutoResize is NONE or WIDTH_AND_HEIGHT, it has a defined width.
       if (node.type !== "TEXT" || node.textAutoResize !== "WIDTH_AND_HEIGHT") {
-        if (node.width > 384) {
+        if (!tailwindWidth && node.width > TAILWIND_MAX_SIZE) {
           this.style += htmlWidth;
         } else {
           this.attributes += tailwindWidth;
@@ -160,7 +161,7 @@ export class TailwindDefaultBuilder {
 
       // when textAutoResize is NONE has a defined height.
       if (node.type !== "TEXT" || node.textAutoResize === "NONE") {
-        if (node.width > 384) {
+        if (!tailwindHeight && node.height > TAILWIND_MAX_SIZE) {
           this.style += htmlHeight;
         } else {
           this.attributes += tailwindHeight;

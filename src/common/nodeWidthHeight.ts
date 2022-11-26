@@ -1,5 +1,5 @@
 import { AltSceneNode } from "../altNodes/altMixins";
-
+export const TAILWIND_MAX_SIZE: number = 96*4;
 export const magicMargin = 32;
 
 type SizeResult = {
@@ -24,6 +24,7 @@ export const nodeWidthHeight = (
       height: "full",
     };
   }
+
 
   const [nodeWidth, nodeHeight] = getNodeSizeWithStrokes(node);
 
@@ -53,6 +54,10 @@ export const nodeWidthHeight = (
     }
   }
 
+  if (node.name=="image") {
+    console.log("image 2=====================", {propWidth, propHeight});
+  }
+
   // avoid relative width when parent is relative (therefore, child is probably absolute, which doesn't work nice)
   // ignore for root layer
   // todo should this be kept this way? The issue is w-full which doesn't work well with absolute position.
@@ -72,7 +77,9 @@ export const nodeWidthHeight = (
       }
     }
   }
-
+  if (node.name=="image") {
+    console.log("image 3=====================", {propWidth, propHeight});
+  }
   // when any child has a relative width and parent is HORIZONTAL,
   // parent must have a defined width, which wouldn't otherwise.
   // todo check if the performance impact of this is worth it.
@@ -104,6 +111,10 @@ export const nodeWidthHeight = (
     }
   }
 
+  if (node.name=="image") {
+    console.log("image 4=====================", {propWidth, propHeight});
+  }
+
   if ("layoutMode" in node) {
     if (
       (node.layoutMode === "HORIZONTAL" &&
@@ -123,19 +134,24 @@ export const nodeWidthHeight = (
     }
   }
 
-  // On Tailwind, do not let the size be larger than 384.
+  // On Tailwind, do not let the size be larger than TAILWIND_MAX_SIZE.
+  // 不应该在这里处理，应该在外层再操作，判断是否应该使用数值
   if (allowRelative) {
     if (
-      (node.type !== "RECTANGLE" && nodeHeight > 384) ||
+      (node.type !== "RECTANGLE" && nodeHeight > TAILWIND_MAX_SIZE) ||
       childLargerThanMaxSize(node, "y")
     ) {
       propHeight = null;
     } else if (
-      (node.type !== "RECTANGLE" && nodeWidth > 384) ||
+      (node.type !== "RECTANGLE" && nodeWidth > TAILWIND_MAX_SIZE) ||
       childLargerThanMaxSize(node, "x")
     ) {
       propWidth = null;
     }
+  }
+
+  if (node.name=="image") {
+    console.log("image 5=====================", {propWidth, propHeight});
   }
 
   if ("layoutMode" in node && node.layoutMode !== "NONE") {
@@ -213,7 +229,7 @@ const childLargerThanMaxSize = (node: AltSceneNode, axis: "x" | "y") => {
 
     const maxLen =
       lastChild[axis] + lastChild[widthHeight] - node.children[0][axis];
-    return maxLen > 384;
+    return maxLen > TAILWIND_MAX_SIZE;
   }
   return false;
 };
@@ -230,19 +246,15 @@ type responsive =
   | "1/6"
   | "5/6";
 
-const calculateResponsiveWH = (
+export const calculateResponsiveWH = (
   node: AltSceneNode,
   nodeWidthHeight: number,
   axis: "x" | "y"
 ): responsive => {
   let returnValue: responsive = "";
 
-  if (nodeWidthHeight > 384 || childLargerThanMaxSize(node, axis)) {
-    returnValue = "full";
-  }
-
   if (!node.parent) {
-    return returnValue;
+    return "full";
   }
 
   let parentWidthHeight;

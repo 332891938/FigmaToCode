@@ -1,6 +1,6 @@
 import { AltSceneNode } from "../../altNodes/altMixins";
 import { pxToLayoutSize } from "../conversionTables";
-import { nodeWidthHeight } from "../../common/nodeWidthHeight";
+import { nodeWidthHeight, calculateResponsiveWH } from "../../common/nodeWidthHeight";
 import { formatWithJSX } from "../../common/parseJSX";
 
 export const tailwindSize = (node: AltSceneNode): string => {
@@ -9,10 +9,17 @@ export const tailwindSize = (node: AltSceneNode): string => {
 
 export const tailwindSizePartial = (node: AltSceneNode): [string, string] => {
   const size = nodeWidthHeight(node, true);
+  if(node.name === "image") {
+    console.log("image ======================================")
+  }
+  console.log("sizeResults 1 is ", size, node);
 
   let w = "";
   if (typeof size.width === "number") {
-    w += `w-${pxToLayoutSize(size.width)} `;
+    let r = calculateResponsiveWH(node, size.width, "x")
+    if (r){
+      w = `w-${r} `;
+    }
   } else if (typeof size.width === "string") {
     if (
       size.width === "full" &&
@@ -30,7 +37,10 @@ export const tailwindSizePartial = (node: AltSceneNode): [string, string] => {
   // console.log("sizeResults is ", sizeResult, node);
 
   if (typeof size.height === "number") {
-    h = `h-${pxToLayoutSize(size.height)} `;
+    let r = calculateResponsiveWH(node, size.height, "y")
+    if (r){
+      h = `h-${r} `;
+    }
   } else if (typeof size.height === "string") {
     if (
       size.height === "full" &&
@@ -44,6 +54,7 @@ export const tailwindSizePartial = (node: AltSceneNode): [string, string] => {
     }
   }
 
+  console.log("sizeResults 2 is ", {w, h}, node);
   return [w, h];
 };
 

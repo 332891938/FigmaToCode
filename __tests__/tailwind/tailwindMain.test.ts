@@ -7,6 +7,7 @@ import {
 } from "../../src/altNodes/altMixins";
 import { TailwindDefaultBuilder } from "../../src/tailwind/tailwindDefaultBuilder";
 import { tailwindMain } from "../../src/tailwind/tailwindMain";
+import {TAILWIND_MAX_SIZE} from "../../src/common/nodeWidthHeight";
 
 describe("Tailwind Main", () => {
   // @ts-ignore for some reason, need to override this for figma.mixed to work
@@ -23,7 +24,7 @@ describe("Tailwind Main", () => {
     node.counterAxisSizingMode = "FIXED";
 
     const child1 = new AltRectangleNode();
-    child1.width = 385;
+    child1.width = TAILWIND_MAX_SIZE+1; 
     child1.height = 8;
     child1.x = 9;
     child1.y = 9;
@@ -41,7 +42,7 @@ describe("Tailwind Main", () => {
 
     const child2 = new AltRectangleNode();
     child2.width = 8;
-    child2.height = 385;
+    child2.height = TAILWIND_MAX_SIZE+1; 
     child2.x = 9;
     child2.y = 9;
     child2.name = "RECT2";
@@ -53,7 +54,7 @@ describe("Tailwind Main", () => {
 
     expect(tailwindMain([convertToAutoLayout(node)]))
       .toEqual(`<div class="relative" style="width: 320px; height: 320px;">
-    <div class="absolute bg-white" style="width: 385px; height: 8px; left: 9px; top: 9px;"></div>
+    <div class="absolute bg-white" style="width: ${TAILWIND_MAX_SIZE+1}px; height: 8px; left: 9px; top: 9px;"></div>
     <div class="w-2 h-96 absolute" style="left: 9px; top: 9px;"></div>
 </div>`);
   });

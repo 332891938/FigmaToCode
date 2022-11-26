@@ -2,6 +2,7 @@ import {
   AltRectangleNode,
   AltFrameNode,
 } from "../../../src/altNodes/altMixins";
+import {TAILWIND_MAX_SIZE} from "../../../src/common/nodeWidthHeight";
 import { tailwindSize } from "../../../src/tailwind/builderImpl/tailwindSize";
 
 describe("Tailwind Builder", () => {
@@ -21,8 +22,8 @@ describe("Tailwind Builder", () => {
     node.height = 200;
     expect(tailwindSize(node)).toEqual("w-24 h-48 ");
 
-    node.width = 500;
-    node.height = 500;
+    node.width = TAILWIND_MAX_SIZE+100;
+    node.height = TAILWIND_MAX_SIZE+100;
     expect(tailwindSize(node)).toEqual("w-full h-96 ");
   });
 

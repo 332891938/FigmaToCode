@@ -5,6 +5,8 @@ import {
   AltFrameNode,
   AltGroupNode,
 } from "../../src/altNodes/altMixins";
+import {TAILWIND_MAX_SIZE} from "../../src/common/nodeWidthHeight";
+
 
 describe("Flutter Main", () => {
   // @ts-ignore for some reason, need to override this for figma.mixed to work
@@ -78,16 +80,16 @@ describe("Flutter Main", () => {
 )`);
   });
 
-  it("children is larger than 384", () => {
+  it("children is larger than MAX_WIDTH", () => {
     const node = new AltFrameNode();
-    node.width = 420;
+    node.width = TAILWIND_MAX_SIZE+20;
     node.height = 420;
     node.name = "FRAME";
     node.layoutMode = "NONE";
     node.counterAxisSizingMode = "FIXED";
 
     const child1 = new AltRectangleNode();
-    child1.width = 385;
+    child1.width = TAILWIND_MAX_SIZE+1;
     child1.height = 8;
     child1.x = 9;
     child1.y = 9;
@@ -104,7 +106,7 @@ describe("Flutter Main", () => {
 
     const child2 = new AltRectangleNode();
     child2.width = 8;
-    child2.height = 385;
+    child2.height = TAILWIND_MAX_SIZE+1;
     child2.x = 9;
     child2.y = 9;
 
@@ -114,7 +116,7 @@ describe("Flutter Main", () => {
     child2.parent = node;
 
     expect(flutterMain([convertToAutoLayout(node)])).toEqual(`Container(
-    width: 420,
+    width: ${TAILWIND_MAX_SIZE+20},
     height: 420,
     child: Stack(
         children:[
@@ -122,7 +124,7 @@ describe("Flutter Main", () => {
                 left: 9,
                 top: 9,
                 child: Container(
-                    width: 385,
+                    width: ${TAILWIND_MAX_SIZE+1},
                     height: 8,
                     color: Colors.white,
                 ),
@@ -132,7 +134,7 @@ describe("Flutter Main", () => {
                 top: 9,
                 child: Container(
                     width: 8,
-                    height: 385,
+                    height: ${TAILWIND_MAX_SIZE+1},
                 ),
             ),
         ],
